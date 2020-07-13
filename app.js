@@ -1,18 +1,19 @@
-const express = require('express')
+const app = require('express')
 const bodyParser = require('body-parser')
-const feedRoutes = require ('./routes/feed')
+const cors =require('cors')
+const dotenv = require('dotenv')
+const books = require('./controller/books')
 
-const app = express()
-
-   
+dotenv.config();
+const port = 3000;
+app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT,PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-    next();
-   })
-   
-app.use('/feed',feedRoutes);
-
-app.listen(8080)
+app.use(cors());
+app.get('/',(req,res) =>{
+    res.status(200).send({
+        env:process.env
+    })
+});
+app.get('/books',books.getAll);
+app.post('/books', books.createBook);
+app.listen(port);
